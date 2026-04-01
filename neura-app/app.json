@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "Neura",
+    "slug": "neura-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": false,
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0F172A"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.neura.studyapp"
+    },
+    "android": {
+      "package": "com.neura.studyapp"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "color": "#10B981"
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": []
+        }
+      ]
+    ],
+    "scheme": "neura",
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
