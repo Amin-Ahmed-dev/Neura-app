@@ -166,13 +166,17 @@ export default function HomeScreen() {
   const syncStats = useCallback(async () => {
     setLoadingStats(true);
     try {
-      const data = await apiClient.get("/study/stats");
+      const response = await apiClient.get("/study/stats");
+      const data = response.data as Record<string, unknown>;
+      const tasksTodayData = data.tasks_today as { total: number; completed: number } | number;
       syncFromServer({
-        todayDeepWorkMinutes: data.today_deep_work_minutes,
-        currentStreak: data.current_streak,
-        neurons: data.neurons_balance,
-        fluencyScore: data.fluency_score,
-        tasksToday: data.tasks_today,
+        todayDeepWorkMinutes: data.today_deep_work_minutes as number,
+        currentStreak: data.current_streak as number,
+        neurons: data.neurons_balance as number,
+        fluencyScore: data.fluency_score as number,
+        tasksToday: typeof tasksTodayData === 'number' 
+          ? { total: tasksTodayData, completed: 0 } 
+          : tasksTodayData,
       });
     } catch {
       // Offline — use cached store values

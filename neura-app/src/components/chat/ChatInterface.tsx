@@ -283,9 +283,9 @@ export function ChatInterface({ onRequestClear }: ChatInterfaceProps) {
         visible={showClearConfirm}
         title="مسح المحادثة"
         message="هتمسح كل المحادثة؟ مش هترجع تاني."
-        confirmText="امسح"
-        cancelText="إلغاء"
-        destructive
+        confirmLabel="امسح"
+        cancelLabel="إلغاء"
+        isDanger
         onConfirm={handleClear}
         onCancel={() => setShowClearConfirm(false)}
       />

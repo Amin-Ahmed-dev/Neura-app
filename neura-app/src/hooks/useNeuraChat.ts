@@ -2,7 +2,8 @@ import { useState, useCallback, useRef } from "react";
 import { database, chatMessagesCollection } from "@/db/database";
 import { apiClient, TOKEN_KEY } from "@/services/apiClient";
 import * as SecureStore from "expo-secure-store";
-import { Q } from "@nozbe/watermelondb";
+// Temporarily disabled for UI testing
+// import { Q } from "@nozbe/watermelondb";
 
 const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
 
@@ -31,6 +32,12 @@ export function useNeuraChat() {
   const loadHistory = useCallback(async () => {
     setIsLoadingHistory(true);
     try {
+      // Temporarily using mock data - WatermelonDB disabled
+      setMessages([]);
+      pageRef.current = 1;
+      setHasMoreHistory(false);
+      
+      /* Original WatermelonDB implementation
       const records = await chatMessagesCollection
         .query(Q.sortBy("created_at", Q.desc), Q.take(PAGE_SIZE))
         .fetch();
@@ -46,6 +53,7 @@ export function useNeuraChat() {
       setMessages(msgs);
       pageRef.current = 1;
       setHasMoreHistory(records.length === PAGE_SIZE);
+      */
     } catch (e) {
       console.warn("[useNeuraChat] loadHistory error:", e);
     } finally {
@@ -58,6 +66,10 @@ export function useNeuraChat() {
     if (!hasMoreHistory || isLoadingHistory) return;
     setIsLoadingHistory(true);
     try {
+      // Temporarily using mock data - WatermelonDB disabled
+      setHasMoreHistory(false);
+      
+      /* Original WatermelonDB implementation
       const skip = pageRef.current * PAGE_SIZE;
       const records = await chatMessagesCollection
         .query(Q.sortBy("created_at", Q.desc), Q.skip(skip), Q.take(PAGE_SIZE))
@@ -79,6 +91,7 @@ export function useNeuraChat() {
       setMessages((prev) => [...older, ...prev]);
       pageRef.current += 1;
       setHasMoreHistory(records.length === PAGE_SIZE);
+      */
     } catch (e) {
       console.warn("[useNeuraChat] loadOlderMessages error:", e);
     } finally {
@@ -90,6 +103,10 @@ export function useNeuraChat() {
   const saveToDb = useCallback(
     async (role: "user" | "assistant", content: string, subject?: string | null) => {
       try {
+        // Temporarily disabled - using mock data
+        console.log("[useNeuraChat] Mock save:", { role, content, subject });
+        
+        /* Original WatermelonDB implementation
         await database.write(async () => {
           await chatMessagesCollection.create((record) => {
             record.role = role;
@@ -98,6 +115,7 @@ export function useNeuraChat() {
             record.synced = false;
           });
         });
+        */
       } catch (e) {
         console.warn("[useNeuraChat] saveToDb error:", e);
       }
@@ -147,6 +165,7 @@ export function useNeuraChat() {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({ message: text.trim(), subject, stream: true }),
+          // @ts-expect-error AbortSignal type compatibility with React Native
           signal: abortRef.current.signal,
         });
 
@@ -225,6 +244,13 @@ export function useNeuraChat() {
     } catch {
       // best-effort — clear locally regardless
     }
+    
+    // Temporarily disabled - using mock data
+    setMessages([]);
+    pageRef.current = 0;
+    setHasMoreHistory(true);
+    
+    /* Original WatermelonDB implementation
     await database.write(async () => {
       const all = await chatMessagesCollection.query().fetch();
       await database.batch(...all.map((r) => r.prepareDestroyPermanently()));
@@ -232,6 +258,7 @@ export function useNeuraChat() {
     setMessages([]);
     pageRef.current = 0;
     setHasMoreHistory(true);
+    */
   }, []);
 
   return {

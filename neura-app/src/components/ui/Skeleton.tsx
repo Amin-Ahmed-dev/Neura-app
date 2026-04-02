@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import { View, Animated, ViewStyle } from "react-native";
+import { View, Animated, ViewStyle, DimensionValue } from "react-native";
 
 interface SkeletonProps {
-  width?: number | string;
-  height?: number | string;
+  width?: DimensionValue;
+  height?: DimensionValue;
   borderRadius?: number;
   className?: string;
   style?: ViewStyle;
@@ -42,11 +42,11 @@ export function Skeleton({
       className={`bg-surface ${className}`}
       style={[
         {
-          width,
-          height,
+          width: width as DimensionValue,
+          height: height as DimensionValue,
           borderRadius,
           opacity,
-        },
+        } as ViewStyle,
         style,
       ]}
     />

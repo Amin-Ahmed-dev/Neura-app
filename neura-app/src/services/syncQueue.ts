@@ -39,7 +39,7 @@ export async function enqueue(
 export async function getQueue(): Promise<QueueEntry[]> {
   const items = await syncQueueCollection.query().fetch();
   return items
-    .sort((a, b) => a.createdAt - b.createdAt)
+    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
     .map((item) => ({
       id: item.id,
       entityType: item.entityType as EntityType,

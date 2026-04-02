@@ -1,22 +1,10 @@
 module.exports = function (api) {
   api.cache(true);
   return {
-    presets: [
-      [
-        "babel-preset-expo",
-        {
-          jsxImportSource: "nativewind",
-          lazyImports: true,
-          native: {
-            useTransformReactJSXExperimental: true,
-          },
-        },
-      ],
-    ],
+    presets: ["babel-preset-expo"],
     plugins: [
-      "nativewind/babel",
       // WatermelonDB decorator support (legacy mode for compatibility)
-      ["@babel/plugin-proposal-decorators", { version: "legacy" }],
+      ["@babel/plugin-proposal-decorators", { legacy: true }],
       // React Native Reanimated must be last
       "react-native-reanimated/plugin",
     ],

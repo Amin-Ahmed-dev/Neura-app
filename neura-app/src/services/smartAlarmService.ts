@@ -1,4 +1,5 @@
 import * as Notifications from "expo-notifications";
+import { SchedulableTriggerInputTypes } from "expo-notifications";
 import { Audio } from "expo-av";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -50,7 +51,7 @@ export async function scheduleSmartAlarm(sleepStartMs: number): Promise<void> {
       sound: true,
       sticky: true,
     },
-    trigger: { date: optimalWake },
+    trigger: { type: SchedulableTriggerInputTypes.DATE, date: optimalWake },
   });
 }
 

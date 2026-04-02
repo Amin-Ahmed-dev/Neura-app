@@ -1,5 +1,6 @@
 {
   "expo": {
+    "jsEngine":"hermes",
     "name": "Neura",
     "slug": "neura-app",
     "version": "1.0.0",
@@ -12,10 +13,14 @@
     },
     "ios": {
       "supportsTablet": false,
+      "jsEngine" : "jsc",
       "bundleIdentifier": "com.neura.studyapp"
     },
     "android": {
-      "package": "com.neura.studyapp"
+      "package": "com.neura.studyapp",
+      "adaptiveIcon": {
+        "backgroundColor": "#0F172A"
+      }
     },
     "plugins": [
       "expo-router",

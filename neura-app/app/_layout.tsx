@@ -5,11 +5,13 @@ import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { DatabaseProvider } from "@nozbe/watermelondb/DatabaseProvider";
+// Temporarily disabled for UI testing
+// import { DatabaseProvider } from "@nozbe/watermelondb/DatabaseProvider";
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
 import * as Notifications from "expo-notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from "expo-constants";
 import {
   Cairo_400Regular,
   Cairo_600SemiBold,
@@ -39,6 +41,7 @@ import { getQueueCount } from "@/services/syncQueue";
 import "../global.css";
 
 const ACTIVE_SESSION_KEY = "neura_timer_state";
+const isExpoGo = Constants.appOwnership === "expo";
 
 // Keep splash visible until fonts are ready
 SplashScreen.preventAutoHideAsync();
@@ -49,6 +52,8 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -201,73 +206,72 @@ export default function RootLayout() {
     <ErrorBoundary>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <SafeAreaProvider>
-          <DatabaseProvider database={database}>
-            <QueryClientProvider client={queryClient}>
-                <View
-                  style={{ flex: 1, backgroundColor: "#0F172A" }}
-                  onLayout={onLayoutRootView}
-                >
-                  <StatusBar style="light" backgroundColor="#0F172A" />
-                  <OfflineBanner />
-                  <SyncToast />
-                  <Stack
-                    screenOptions={{
-                      headerShown: false,
-                      contentStyle: { backgroundColor: "#0F172A" },
-                      animation: "fade",
-                    }}
-                  >
-                    <Stack.Screen name="index" />
-                    <Stack.Screen name="(auth)" />
-                    <Stack.Screen name="(tabs)" />
-                    <Stack.Screen name="onboarding" />
-                    <Stack.Screen name="notification-settings" />
-                    <Stack.Screen name="settings" />
-                    <Stack.Screen name="goals" />
-                    <Stack.Screen name="creator" />
-                  </Stack>
+          {/* Temporarily using mocks for UI testing - DatabaseProvider disabled */}
+          <QueryClientProvider client={queryClient}>
+            <View
+              style={{ flex: 1, backgroundColor: "#0F172A" }}
+              onLayout={onLayoutRootView}
+            >
+              <StatusBar style="light" backgroundColor="#0F172A" />
+              <OfflineBanner />
+              <SyncToast />
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  contentStyle: { backgroundColor: "#0F172A" },
+                  animation: "fade",
+                }}
+              >
+                <Stack.Screen name="index" />
+                <Stack.Screen name="(auth)" />
+                <Stack.Screen name="(tabs)" />
+                <Stack.Screen name="onboarding" />
+                <Stack.Screen name="notification-settings" />
+                <Stack.Screen name="settings" />
+                <Stack.Screen name="goals" />
+                <Stack.Screen name="creator" />
+              </Stack>
 
-                {/* T-18-03: Crash recovery dialog */}
-                <Modal visible={!!crashRecovery} transparent animationType="fade">
-                  <Pressable
-                    style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.6)", alignItems: "center", justifyContent: "center" }}
-                    onPress={() => {}}
-                  >
-                    <View style={{ backgroundColor: "#1E293B", borderRadius: 24, padding: 24, marginHorizontal: 24 }}>
-                      <Text style={{ color: "#F8FAFC", fontSize: 20, fontFamily: "Cairo_700Bold", textAlign: "center", marginBottom: 8 }}>
-                        لقينا جلسة ناقصة 📚
-                      </Text>
-                      <Text style={{ color: "#94A3B8", fontSize: 14, fontFamily: "Cairo_400Regular", textAlign: "center", marginBottom: 20 }}>
-                        كانت عندك جلسة {crashRecovery?.subject} لمدة {crashRecovery?.elapsedMinutes} دقيقة. تحسبها؟
-                      </Text>
-                      <View style={{ flexDirection: "row", gap: 12 }}>
-                        <TouchableOpacity
-                          style={{ flex: 1, backgroundColor: "#0F172A", borderRadius: 16, paddingVertical: 14, alignItems: "center" }}
-                          onPress={async () => {
-                            await AsyncStorage.removeItem(ACTIVE_SESSION_KEY);
-                            setCrashRecovery(null);
-                          }}
-                        >
-                          <Text style={{ color: "#94A3B8", fontFamily: "Cairo_700Bold" }}>لا</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          style={{ flex: 1, backgroundColor: "#10B981", borderRadius: 16, paddingVertical: 14, alignItems: "center" }}
-                          onPress={async () => {
-                            const partial = Math.min(25, Math.floor((crashRecovery!.elapsedMinutes / 25) * 25));
-                            if (partial > 0) addNeurons(partial);
-                            await AsyncStorage.removeItem(ACTIVE_SESSION_KEY);
-                            setCrashRecovery(null);
-                          }}
-                        >
-                          <Text style={{ color: "white", fontFamily: "Cairo_700Bold" }}>أيوه ⚡</Text>
-                        </TouchableOpacity>
-                      </View>
+              {/* T-18-03: Crash recovery dialog */}
+              <Modal visible={!!crashRecovery} transparent animationType="fade">
+                <Pressable
+                  style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.6)", alignItems: "center", justifyContent: "center" }}
+                  onPress={() => {}}
+                >
+                  <View style={{ backgroundColor: "#1E293B", borderRadius: 24, padding: 24, marginHorizontal: 24 }}>
+                    <Text style={{ color: "#F8FAFC", fontSize: 20, fontFamily: "Cairo_700Bold", textAlign: "center", marginBottom: 8 }}>
+                      لقينا جلسة ناقصة 📚
+                    </Text>
+                    <Text style={{ color: "#94A3B8", fontSize: 14, fontFamily: "Cairo_400Regular", textAlign: "center", marginBottom: 20 }}>
+                      كانت عندك جلسة {crashRecovery?.subject} لمدة {crashRecovery?.elapsedMinutes} دقيقة. تحسبها؟
+                    </Text>
+                    <View style={{ flexDirection: "row", gap: 12 }}>
+                      <TouchableOpacity
+                        style={{ flex: 1, backgroundColor: "#0F172A", borderRadius: 16, paddingVertical: 14, alignItems: "center" }}
+                        onPress={async () => {
+                          await AsyncStorage.removeItem(ACTIVE_SESSION_KEY);
+                          setCrashRecovery(null);
+                        }}
+                      >
+                        <Text style={{ color: "#94A3B8", fontFamily: "Cairo_700Bold" }}>لا</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{ flex: 1, backgroundColor: "#10B981", borderRadius: 16, paddingVertical: 14, alignItems: "center" }}
+                        onPress={async () => {
+                          const partial = Math.min(25, Math.floor((crashRecovery!.elapsedMinutes / 25) * 25));
+                          if (partial > 0) addNeurons(partial);
+                          await AsyncStorage.removeItem(ACTIVE_SESSION_KEY);
+                          setCrashRecovery(null);
+                        }}
+                      >
+                        <Text style={{ color: "white", fontFamily: "Cairo_700Bold" }}>أيوه ⚡</Text>
+                      </TouchableOpacity>
                     </View>
-                  </Pressable>
-                </Modal>
-              </View>
-            </QueryClientProvider>
-          </DatabaseProvider>
+                  </View>
+                </Pressable>
+              </Modal>
+            </View>
+          </QueryClientProvider>
         </SafeAreaProvider>
       </GestureHandlerRootView>
     </ErrorBoundary>

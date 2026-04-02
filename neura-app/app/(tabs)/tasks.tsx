@@ -43,7 +43,7 @@ function subjectColor(subject: string) {
 
 // ─── Week strip helpers ───────────────────────────────────────────────────────
 function getWeekDays(): { dateStr: string; dayName: string; dayNum: string }[] {
-  const days = [];
+  const days: { dateStr: string; dayName: string; dayNum: string }[] = [];
   const now = new Date();
   const dayOfWeek = now.getDay(); // 0=Sun
   const monday = new Date(now);

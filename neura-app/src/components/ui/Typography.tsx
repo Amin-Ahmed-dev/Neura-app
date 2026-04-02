@@ -58,8 +58,8 @@ export function Typography({
           lineHeight: typeStyle.lineHeight,
           fontWeight: typeStyle.fontWeight,
           fontFamily,
-          letterSpacing: typeStyle.letterSpacing,
-          textTransform: typeStyle.textTransform as "none" | "capitalize" | "uppercase" | "lowercase" | undefined,
+          letterSpacing: "letterSpacing" in typeStyle ? typeStyle.letterSpacing : undefined,
+          textTransform: "textTransform" in typeStyle ? (typeStyle.textTransform as "none" | "capitalize" | "uppercase" | "lowercase") : undefined,
         },
         style,
       ]}

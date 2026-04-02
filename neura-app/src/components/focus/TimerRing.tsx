@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 import Svg, { Circle } from "react-native-svg";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, SharedValue } from "react-native-reanimated";
 
 const TIMER_SIZE = 240;
 const STROKE = 10;
@@ -13,7 +13,7 @@ interface TimerRingProps {
   seconds: number;
   progress: number;
   color: string;
-  ringPulse: Animated.SharedValue<number>;
+  ringPulse: SharedValue<number>;
   neuronsStyle: any;
 }
 

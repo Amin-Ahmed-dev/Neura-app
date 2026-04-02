@@ -123,7 +123,7 @@ export function BottomSheet({
               bottom: 0,
               left: 0,
               right: 0,
-              maxHeight: typeof maxHeight === 'number' ? maxHeight : maxHeight,
+              maxHeight: typeof maxHeight === 'number' ? maxHeight : undefined,
             },
             sheetStyle,
           ]}
