@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { View, Text, ScrollView, BackHandler } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { PomodoroTimer } from "@/components/focus/PomodoroTimer";
 import { useStudyStore } from "@/store/studyStore";
-import { Badge } from "@/components/ui/Badge";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { usePomodoroTimer } from "@/hooks/usePomodoroTimer";
 
@@ -32,16 +32,23 @@ export default function FocusScreen() {
   };
 
   return (
-    <View className="flex-1 bg-background">
+    <SafeAreaView className="flex-1 bg-slate-950" edges={["top"]}>
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1, alignItems: "center", paddingHorizontal: 24, paddingBottom: 40 }}
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 20, paddingBottom: 32 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View className="flex-row justify-between items-center w-full mt-14 mb-8">
-          <Badge variant="streak" label={`${currentStreak} يوم 🔥`} />
-          <Text className="text-textPrimary text-xl font-bold">وضع التركيز 🎯</Text>
-          <Badge variant="neurons" label={`${neurons} ⚡`} icon="flash" />
+        <View className="flex-row-reverse justify-between items-center mb-8">
+          <Text className="text-white text-2xl font-bold">وضع التركيز 🎯</Text>
+          <View className="flex-row gap-3">
+            <View className="bg-slate-800/50 border border-slate-700 rounded-xl px-3 py-2">
+              <Text className="text-yellow-400 text-sm font-bold">{neurons} ⚡</Text>
+            </View>
+            <View className="bg-slate-800/50 border border-slate-700 rounded-xl px-3 py-2">
+              <Text className="text-orange-400 text-sm font-bold">{currentStreak} يوم 🔥</Text>
+            </View>
+          </View>
         </View>
 
         {/* Timer */}
@@ -59,6 +66,6 @@ export default function FocusScreen() {
         onConfirm={handleAbandonAndBack}
         onCancel={() => setShowBackDialog(false)}
       />
-    </View>
+    </SafeAreaView>
   );
 }

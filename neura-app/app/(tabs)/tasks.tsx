@@ -7,6 +7,7 @@ import {
   Animated,
   AppState,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useStudyStore } from "@/store/studyStore";
@@ -265,44 +266,47 @@ export default function TasksScreen() {
   const neuronsTranslateY = neuronsAnim.interpolate({ inputRange: [0, 1], outputRange: [0, -50] });
 
   return (
-    <View className="flex-1 bg-background">
+    <SafeAreaView className="flex-1 bg-slate-950" edges={["top"]}>
       {/* Floating neurons reward */}
       {neuronsVisible && (
         <Animated.View
           style={{ position: "absolute", top: "40%", alignSelf: "center", zIndex: 99, opacity: neuronsAnim, transform: [{ translateY: neuronsTranslateY }] }}
           pointerEvents="none"
         >
-          <Text className="text-neurons font-bold text-2xl">+5 ⚡</Text>
+          <Text className="text-yellow-400 font-bold text-2xl">+5 ⚡</Text>
         </Animated.View>
       )}
 
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View className="flex-row justify-between items-center px-5 mt-14 mb-4">
-          <TouchableOpacity
-            className="bg-primary w-10 h-10 rounded-full items-center justify-center"
-            onPress={() => setAddSheetVisible(true)}
-          >
-            <Ionicons name="add" size={24} color="white" />
-          </TouchableOpacity>
-          <Text className="text-textPrimary text-xl font-bold">مهامي 📋</Text>
-          <TouchableOpacity
-            className="bg-surface px-3 py-2 rounded-xl flex-row items-center gap-1"
-            onPress={() => router.push("/goals/new")}
-            activeOpacity={0.8}
-          >
-            <Ionicons name="flag-outline" size={14} color="#10B981" />
-            <Text className="text-primary text-xs font-bold" style={{ fontFamily: "Cairo_700Bold" }}>هدف كبير 🏔️</Text>
-          </TouchableOpacity>
+        <View className="flex-row-reverse justify-between items-center px-5 mb-4">
+          <Text className="text-white text-2xl font-bold">مهامي 📋</Text>
+          <View className="flex-row gap-3">
+            <TouchableOpacity
+              className="bg-slate-800/50 border border-slate-700 rounded-xl px-3 py-2 flex-row items-center gap-2 active:scale-95"
+              onPress={() => router.push("/goals/new")}
+              activeOpacity={0.9}
+            >
+              <Text className="text-emerald-500 text-sm font-bold">هدف كبير 🏔️</Text>
+              <Ionicons name="flag-outline" size={14} color="#10B981" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="bg-emerald-500 w-10 h-10 rounded-xl items-center justify-center active:scale-95"
+              onPress={() => setAddSheetVisible(true)}
+              activeOpacity={0.9}
+            >
+              <Ionicons name="add" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Rollover banner */}
         {rolloverCount > 0 && (
-          <View className="mx-5 mb-4 bg-accent/10 border border-accent/30 rounded-2xl p-3 flex-row-reverse items-center gap-2">
-            <Text className="text-accent text-sm font-bold flex-1 text-right">
+          <View className="mx-5 mb-4 bg-orange-500/10 border border-orange-500/30 rounded-2xl p-3 flex-row-reverse items-center gap-2">
+            <Text className="text-orange-400 text-sm font-bold flex-1 text-right">
               ↩ {rolloverCount} مهام اتنقلوا من امبارح، يلا نبدأ 💪
             </Text>
-            <TouchableOpacity onPress={() => setRolloverCount(0)}>
+            <TouchableOpacity onPress={() => setRolloverCount(0)} className="active:scale-95" activeOpacity={0.9}>
               <Ionicons name="close" size={16} color="#F97316" />
             </TouchableOpacity>
           </View>
@@ -317,11 +321,13 @@ export default function TasksScreen() {
               <TouchableOpacity
                 key={dateStr}
                 onPress={() => setSelectedDate(dateStr)}
-                className="items-center px-3 py-2 rounded-2xl min-w-[52px]"
-                style={{ backgroundColor: isSelected ? "#10B981" : "#1E293B" }}
+                className={`items-center px-3 py-2 rounded-2xl min-w-[52px] active:scale-95 ${
+                  isSelected ? "bg-emerald-500" : "bg-slate-800/50 border border-slate-700"
+                }`}
+                activeOpacity={0.9}
               >
-                <Text className="text-xs" style={{ color: isSelected ? "white" : "#94A3B8" }}>{dayName.slice(0, 3)}</Text>
-                <Text className="font-bold text-base mt-0.5" style={{ color: isSelected ? "white" : isToday ? "#10B981" : "#F8FAFC" }}>{dayNum}</Text>
+                <Text className={`text-xs ${isSelected ? "text-white" : "text-slate-400"}`}>{dayName.slice(0, 3)}</Text>
+                <Text className={`font-bold text-base mt-0.5 ${isSelected ? "text-white" : isToday ? "text-emerald-500" : "text-white"}`}>{dayNum}</Text>
               </TouchableOpacity>
             );
           })}
@@ -329,17 +335,17 @@ export default function TasksScreen() {
 
         {/* Day summary */}
         <View className="flex-row-reverse justify-between items-center px-5 mb-3">
-          <Text className="text-textSecondary text-sm">
+          <Text className="text-slate-400 text-sm">
             {totalMinutes} دقيقة إجمالي
-            {isOverloaded && <Text className="text-accent"> ⚠️ كتير أوي!</Text>}
+            {isOverloaded && <Text className="text-orange-400"> ⚠️ كتير أوي!</Text>}
           </Text>
-          <Text className="text-textPrimary font-bold">
+          <Text className="text-white font-bold">
             {pending.length} مهمة متبقية
           </Text>
         </View>
 
         {/* Pending tasks */}
-        <View className="bg-surface rounded-2xl mx-5 px-4">
+        <View className="bg-slate-800/50 border border-slate-700 rounded-2xl mx-5 px-4">
           {loading ? (
             <>
               <SkeletonTaskRow />
@@ -349,7 +355,7 @@ export default function TasksScreen() {
           ) : pending.length === 0 ? (
             <View className="py-10 items-center">
               <Text className="text-4xl mb-2">🎯</Text>
-              <Text className="text-textSecondary text-center">مفيش مهام! ضيف مهمة جديدة</Text>
+              <Text className="text-slate-400 text-center">مفيش مهام! ضيف مهمة جديدة</Text>
             </View>
           ) : (
             pending.map((task: LocalTask) => (
@@ -368,14 +374,15 @@ export default function TasksScreen() {
         {completed.length > 0 && (
           <View className="mx-5 mt-4">
             <TouchableOpacity
-              className="flex-row-reverse items-center gap-2 mb-2"
+              className="flex-row-reverse items-center gap-2 mb-2 active:scale-95"
               onPress={() => setCompletedExpanded((v: boolean) => !v)}
+              activeOpacity={0.9}
             >
               <Ionicons name={completedExpanded ? "chevron-up" : "chevron-down"} size={16} color="#94A3B8" />
-              <Text className="text-textSecondary text-sm">منجز ✅ ({completed.length})</Text>
+              <Text className="text-slate-400 text-sm">منجز ✅ ({completed.length})</Text>
             </TouchableOpacity>
             {completedExpanded && (
-              <View className="bg-surface rounded-2xl px-4">
+              <View className="bg-slate-800/50 border border-slate-700 rounded-2xl px-4">
                 {completed.map((task: LocalTask) => (
                   <TaskRow
                     key={task.id}
@@ -393,9 +400,10 @@ export default function TasksScreen() {
 
       {/* FAB */}
       <TouchableOpacity
-        className="absolute bottom-8 left-6 bg-primary w-14 h-14 rounded-full items-center justify-center"
+        className="absolute bottom-8 left-6 bg-emerald-500 w-14 h-14 rounded-2xl items-center justify-center active:scale-95"
         style={{ shadowColor: "#10B981", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 10, elevation: 8 }}
         onPress={() => setAddSheetVisible(true)}
+        activeOpacity={0.9}
       >
         <Ionicons name="add" size={28} color="white" />
       </TouchableOpacity>
@@ -419,6 +427,6 @@ export default function TasksScreen() {
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteTarget(null)}
       />
-    </View>
+    </SafeAreaView>
   );
 }

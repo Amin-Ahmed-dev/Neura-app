@@ -6,10 +6,11 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  TextInput,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
+import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "@/store/authStore";
 import { authService } from "@/services/authService";
 import { useGuestGuard } from "@/hooks/useGuestGuard";
@@ -21,6 +22,7 @@ export default function LoginScreen() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [globalError, setGlobalError] = useState("");
   const [resetSent, setResetSent] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
@@ -37,7 +39,6 @@ export default function LoginScreen() {
       setUser(user);
       router.replace("/(tabs)/home");
     } catch {
-      // Don't reveal specifics — security best practice
       const msg = "الإيميل أو كلمة السر غلط";
       setGlobalError(msg);
       setError(msg);
@@ -64,110 +65,144 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-background"
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1, padding: 24, paddingTop: 60 }}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView className="flex-1 bg-slate-950">
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        {/* Back */}
-        <TouchableOpacity onPress={() => router.back()} className="mb-6 self-end">
-          <Text className="text-textSecondary text-2xl">←</Text>
-        </TouchableOpacity>
-
-        <Text
-          className="text-textPrimary text-3xl font-bold mb-2 text-right"
-          style={{ fontFamily: "Cairo_700Bold" }}
+        <ScrollView
+          className="flex-1"
+          contentContainerClassName="px-6 py-4"
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          أهلاً بيك 👋
-        </Text>
-        <Text
-          className="text-textSecondary text-right mb-8"
-          style={{ fontFamily: "Cairo_400Regular" }}
-        >
-          ادخل على حسابك وكمّل مذاكرتك
-        </Text>
-
-        {/* Reset success banner */}
-        {resetSent && (
-          <View className="bg-primary/10 border border-primary/30 rounded-xl px-4 py-3 mb-4">
-            <Text
-              className="text-primary text-right text-sm"
-              style={{ fontFamily: "Cairo_400Regular" }}
+          {/* Header */}
+          <View className="flex-row items-center justify-between mb-8">
+            <TouchableOpacity
+              onPress={() => router.back()}
+              className="w-10 h-10 rounded-xl bg-slate-800/50 items-center justify-center active:scale-95"
+              activeOpacity={0.9}
             >
-              ✅ اتبعت رسالة على إيميلك، اتحقق منها
+              <Ionicons name="arrow-forward" size={20} color="#e2e8f0" />
+            </TouchableOpacity>
+            <View className="w-10" />
+          </View>
+
+          {/* Title Section */}
+          <View className="mb-8">
+            <Text className="text-4xl font-bold text-white mb-2 text-right">
+              أهلاً بيك 👋
+            </Text>
+            <Text className="text-lg text-slate-400 text-right">
+              ادخل على حسابك وكمّل مذاكرتك
             </Text>
           </View>
-        )}
 
-        {/* Global error */}
-        {globalError ? (
-          <View className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 mb-4">
-            <Text
-              className="text-red-400 text-right text-sm"
-              style={{ fontFamily: "Cairo_400Regular" }}
-            >
-              {globalError}
+          {/* Success Banner */}
+          {resetSent && (
+            <View className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl px-4 py-4 mb-6 flex-row items-center gap-3">
+              <Ionicons name="checkmark-circle" size={24} color="#10b981" />
+              <Text className="text-emerald-400 text-right flex-1 text-sm leading-5">
+                ✅ اتبعت رسالة على إيميلك، اتحقق منها
+              </Text>
+            </View>
+          )}
+
+          {/* Error Banner */}
+          {globalError ? (
+            <View className="bg-red-500/10 border border-red-500/30 rounded-2xl px-4 py-4 mb-6 flex-row items-center gap-3">
+              <Ionicons name="alert-circle" size={24} color="#ef4444" />
+              <Text className="text-red-400 text-right flex-1 text-sm leading-5">
+                {globalError}
+              </Text>
+            </View>
+          ) : null}
+
+          {/* Email Input */}
+          <View className="mb-4">
+            <Text className="text-slate-300 text-sm font-semibold mb-2 text-right">
+              الإيميل
             </Text>
+            <View className="bg-slate-800/50 border border-slate-700 rounded-2xl px-4 py-4 flex-row items-center gap-3">
+              <Ionicons name="mail-outline" size={20} color="#94a3b8" />
+              <TextInput
+                className="flex-1 text-white text-base text-right"
+                placeholder="example@email.com"
+                placeholderTextColor="#64748b"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+            </View>
           </View>
-        ) : null}
 
-        {/* Fields */}
-        <Input
-          label="الإيميل"
-          placeholder="example@email.com"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-        <Input
-          label="كلمة السر"
-          placeholder="كلمة السر"
-          value={password}
-          onChangeText={setPassword}
-          isPassword
-        />
+          {/* Password Input */}
+          <View className="mb-2">
+            <Text className="text-slate-300 text-sm font-semibold mb-2 text-right">
+              كلمة السر
+            </Text>
+            <View className="bg-slate-800/50 border border-slate-700 rounded-2xl px-4 py-4 flex-row items-center gap-3">
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+                className="active:scale-95"
+                activeOpacity={0.7}
+              >
+                <Ionicons
+                  name={showPassword ? "eye-off-outline" : "eye-outline"}
+                  size={20}
+                  color="#94a3b8"
+                />
+              </TouchableOpacity>
+              <TextInput
+                className="flex-1 text-white text-base text-right"
+                placeholder="كلمة السر"
+                placeholderTextColor="#64748b"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+              />
+            </View>
+          </View>
 
-        {/* Forgot password */}
-        <TouchableOpacity
-          className="self-end mb-8"
-          onPress={handleForgotPassword}
-          disabled={resetLoading}
-        >
-          <Text
-            className="text-primary text-sm"
-            style={{ fontFamily: "Cairo_400Regular" }}
+          {/* Forgot Password */}
+          <TouchableOpacity
+            className="self-end mb-8 active:opacity-70"
+            onPress={handleForgotPassword}
+            disabled={resetLoading}
+            activeOpacity={0.7}
           >
-            {resetLoading ? "جاري الإرسال..." : "نسيت كلمة السر؟"}
-          </Text>
-        </TouchableOpacity>
+            <Text className="text-emerald-400 text-sm font-semibold">
+              {resetLoading ? "جاري الإرسال..." : "نسيت كلمة السر؟"}
+            </Text>
+          </TouchableOpacity>
 
-        {/* Submit */}
-        <Button
-          label={isLoading ? "جاري الدخول..." : "دخول"}
-          variant="primary"
-          size="lg"
-          fullWidth
-          loading={isLoading}
-          onPress={handleLogin}
-        />
+          {/* Login Button */}
+          <TouchableOpacity
+            onPress={handleLogin}
+            disabled={isLoading}
+            className="bg-emerald-500 rounded-2xl py-4 px-6 shadow-lg shadow-emerald-500/30 active:scale-95 mb-6"
+            activeOpacity={0.9}
+          >
+            <Text className="text-white text-center text-lg font-bold">
+              {isLoading ? "جاري الدخول..." : "دخول"}
+            </Text>
+          </TouchableOpacity>
 
-        {/* Register link */}
-        <TouchableOpacity
-          className="mt-6 items-center"
-          onPress={() => router.replace("/(auth)/register")}
-        >
-          <Text className="text-textSecondary" style={{ fontFamily: "Cairo_400Regular" }}>
-            مش عندك حساب؟{" "}
-            <Text className="text-primary font-bold">سجل دلوقتي</Text>
-          </Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          {/* Register Link */}
+          <TouchableOpacity
+            className="items-center py-4 active:opacity-70"
+            onPress={() => router.replace("/(auth)/register")}
+            activeOpacity={0.7}
+          >
+            <Text className="text-slate-400 text-base">
+              مش عندك حساب؟{" "}
+              <Text className="text-emerald-400 font-bold">سجل دلوقتي</Text>
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }

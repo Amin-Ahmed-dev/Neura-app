@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Switch } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -144,36 +145,38 @@ export default function ProfileScreen() {
   };
 
   return (
-    <ScrollView
-      className="flex-1 bg-background"
-      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 56, paddingBottom: 32 }}
-      showsVerticalScrollIndicator={false}
-    >
-      {/* Avatar — tap to edit profile */}
-      <View className="items-center mb-8">
-        <TouchableOpacity
-          onPress={() => router.push("/settings/edit-profile")}
-          activeOpacity={0.8}
-        >
-          <View className="w-24 h-24 rounded-full bg-surface items-center justify-center mb-3 border-2 border-primary/30">
-            <Text style={{ fontSize: 40 }}>🧠</Text>
-          </View>
-          <View className="absolute bottom-3 right-0 bg-primary rounded-full p-1">
-            <Ionicons name="pencil" size={12} color="white" />
-          </View>
-        </TouchableOpacity>
-        <Heading1 className="mb-1">
-          {user?.name}
-        </Heading1>
-        <BodySmall>
-          {user?.studentType}
-        </BodySmall>
-        {user?.isPro && (
-          <View className="mt-2 bg-primary/20 px-3 py-1 rounded-full">
-            <Text className="text-primary text-xs font-bold">⚡ Pro</Text>
-          </View>
-        )}
-      </View>
+    <SafeAreaView className="flex-1 bg-slate-950" edges={["top"]}>
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 32 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Avatar — tap to edit profile */}
+        <View className="items-center mb-8">
+          <TouchableOpacity
+            onPress={() => router.push("/settings/edit-profile")}
+            activeOpacity={0.9}
+            className="active:scale-95"
+          >
+            <View className="w-24 h-24 rounded-2xl bg-slate-800/50 border-2 border-emerald-500/30 items-center justify-center mb-3">
+              <Text style={{ fontSize: 40 }}>🧠</Text>
+            </View>
+            <View className="absolute bottom-3 right-0 bg-emerald-500 rounded-full p-1">
+              <Ionicons name="pencil" size={12} color="white" />
+            </View>
+          </TouchableOpacity>
+          <Text className="text-white text-2xl font-bold mb-1">
+            {user?.name}
+          </Text>
+          <Text className="text-slate-400 text-sm">
+            {user?.studentType}
+          </Text>
+          {user?.isPro && (
+            <View className="mt-2 bg-emerald-500/20 px-3 py-1 rounded-xl">
+              <Text className="text-emerald-500 text-xs font-bold">⚡ Pro</Text>
+            </View>
+          )}
+        </View>
 
       {/* Stats row */}
       <View className="flex-row gap-3 mb-6">
@@ -184,37 +187,38 @@ export default function ProfileScreen() {
 
       {/* Pending sync badge */}
       {pendingSyncCount > 0 && (
-        <View className="bg-accent/20 border border-accent/30 rounded-xl px-4 py-2 mb-4 flex-row items-center justify-end gap-2">
-          <Text className="text-accent text-sm" style={{ fontFamily: "Cairo_400Regular" }}>
+        <View className="bg-orange-500/20 border border-orange-500/30 rounded-xl px-4 py-2 mb-4 flex-row-reverse items-center justify-end gap-2">
+          <Ionicons name="sync-outline" size={16} color="#F97316" />
+          <Text className="text-orange-400 text-sm">
             {pendingSyncCount} عناصر في انتظار المزامنة
           </Text>
-          <Ionicons name="sync-outline" size={16} color="#F97316" />
         </View>
       )}
 
       {/* ── نيوروناتي section ── */}
-      <View className="bg-surface rounded-2xl p-4 mb-4">
-        <View className="flex-row justify-between items-center mb-3">
+      <View className="bg-slate-800/50 border border-slate-700 rounded-2xl p-4 mb-4">
+        <View className="flex-row-reverse justify-between items-center mb-3">
+          <Text className="text-white text-lg font-bold">
+            نيوروناتي ⚡
+          </Text>
           <TouchableOpacity
-            className="flex-row items-center gap-1 bg-primary/10 px-3 py-1 rounded-xl"
+            className="flex-row items-center gap-1 bg-emerald-500/10 px-3 py-1 rounded-xl active:scale-95"
             onPress={() => router.push("/leaderboard")}
+            activeOpacity={0.9}
           >
-            <Ionicons name="trophy-outline" size={14} color="#10B981" />
-            <Text className="text-primary text-xs font-bold" style={{ fontFamily: "Cairo_700Bold" }}>
+            <Text className="text-emerald-500 text-xs font-bold">
               الترتيب
             </Text>
+            <Ionicons name="trophy-outline" size={14} color="#10B981" />
           </TouchableOpacity>
-          <Heading2>
-            نيوروناتي ⚡
-          </Heading2>
         </View>
 
         {/* Balance */}
         <View className="items-center mb-4">
-          <Text className="text-neurons font-bold" style={{ fontSize: 48, fontFamily: "Cairo_700Bold" }}>
+          <Text className="text-yellow-400 font-bold" style={{ fontSize: 48 }}>
             {user?.neuronsBalance ?? 0}
           </Text>
-          <Text className="text-textSecondary text-sm" style={{ fontFamily: "Cairo_400Regular" }}>
+          <Text className="text-slate-400 text-sm">
             نيورون متاح
           </Text>
         </View>
@@ -229,19 +233,18 @@ export default function ProfileScreen() {
         {/* Transaction history */}
         {history.length > 0 && (
           <View className="mt-4">
-            <Text className="text-textSecondary text-xs mb-2 text-right" style={{ fontFamily: "Cairo_400Regular" }}>
+            <Text className="text-slate-400 text-xs mb-2 text-right">
               آخر المعاملات
             </Text>
             {history.map((tx: Transaction) => (
-              <View key={tx.id} className="flex-row justify-between items-center py-2 border-b border-white/5">
+              <View key={tx.id} className="flex-row-reverse justify-between items-center py-2 border-b border-slate-700/50">
+                <Text className="text-white text-sm flex-1 text-right mx-2">
+                  {actionLabels[tx.action_type] ?? tx.label}
+                </Text>
                 <Text
-                  className={`font-bold text-sm ${tx.amount > 0 ? "text-neurons" : "text-red-400"}`}
-                  style={{ fontFamily: "Cairo_700Bold" }}
+                  className={`font-bold text-sm ${tx.amount > 0 ? "text-yellow-400" : "text-red-400"}`}
                 >
                   {tx.amount > 0 ? `+${tx.amount}` : tx.amount} ⚡
-                </Text>
-                <Text className="text-textPrimary text-sm flex-1 text-right mx-2" style={{ fontFamily: "Cairo_400Regular" }}>
-                  {actionLabels[tx.action_type] ?? tx.label}
                 </Text>
               </View>
             ))}
@@ -250,14 +253,14 @@ export default function ProfileScreen() {
 
         {/* Tips expandable */}
         <TouchableOpacity
-          className="mt-4 flex-row justify-between items-center"
+          className="mt-4 flex-row-reverse justify-between items-center active:scale-95"
           onPress={() => setTipsExpanded((v: boolean) => !v)}
-          activeOpacity={0.7}
+          activeOpacity={0.9}
         >
-          <Ionicons name={tipsExpanded ? "chevron-up" : "chevron-down"} size={16} color="#94A3B8" />
-          <Text className="text-textSecondary text-sm font-bold" style={{ fontFamily: "Cairo_700Bold" }}>
+          <Text className="text-slate-400 text-sm font-bold">
             كيف تكسب أكتر؟ 💡
           </Text>
+          <Ionicons name={tipsExpanded ? "chevron-up" : "chevron-down"} size={16} color="#94A3B8" />
         </TouchableOpacity>
         {tipsExpanded && (
           <View className="mt-3 gap-2">
@@ -268,8 +271,8 @@ export default function ProfileScreen() {
               { icon: "🔥", tip: "سلسلة 3 أيام → +50 نيورون بونص" },
               { icon: "🏆", tip: "سلسلة 7 أيام → +150 نيورون بونص" },
             ].map(({ icon, tip }) => (
-              <View key={tip} className="flex-row items-center gap-2 justify-end">
-                <Text className="text-textSecondary text-sm" style={{ fontFamily: "Cairo_400Regular" }}>
+              <View key={tip} className="flex-row-reverse items-center gap-2 justify-end">
+                <Text className="text-slate-400 text-sm">
                   {tip}
                 </Text>
                 <Text style={{ fontSize: 16 }}>{icon}</Text>
@@ -280,64 +283,63 @@ export default function ProfileScreen() {
       </View>
 
       {/* ── الصحة والنوم section ── */}
-      <View className="bg-surface rounded-2xl p-4 mb-4">
-        <Heading2 className="text-right mb-3">
+      <View className="bg-slate-800/50 border border-slate-700 rounded-2xl p-4 mb-4">
+        <Text className="text-white text-lg font-bold text-right mb-3">
           الصحة والنوم 🌙
-        </Heading2>
+        </Text>
 
         {/* Sleep tracking status */}
-        <View className="flex-row justify-between items-center mb-3">
+        <View className="flex-row-reverse justify-between items-center mb-3">
+          <View className="flex-row items-center gap-2">
+            <Ionicons name="bed-outline" size={20} color="#94A3B8" />
+            <Text className="text-slate-400 text-sm">
+              {isSleepTracking ? "تتبع النوم شغال 🌙" : "تتبع النوم"}
+            </Text>
+          </View>
           <TouchableOpacity
-            className={`px-4 py-2 rounded-xl ${isSleepTracking ? "bg-red-500/20" : "bg-primary/20"}`}
+            className={`px-4 py-2 rounded-xl active:scale-95 ${isSleepTracking ? "bg-red-500/20" : "bg-emerald-500/20"}`}
             onPress={isSleepTracking ? manualStopSleep : manualStartSleep}
-            activeOpacity={0.8}
+            activeOpacity={0.9}
           >
             <Text
-              className={`font-bold text-sm ${isSleepTracking ? "text-red-400" : "text-primary"}`}
-              style={{ fontFamily: "Cairo_700Bold" }}
+              className={`font-bold text-sm ${isSleepTracking ? "text-red-400" : "text-emerald-500"}`}
             >
               {isSleepTracking ? "أوقف التتبع" : "بدأت أنام"}
             </Text>
           </TouchableOpacity>
-          <View className="flex-row items-center gap-2">
-            <Text className="text-textSecondary text-sm" style={{ fontFamily: "Cairo_400Regular" }}>
-              {isSleepTracking ? "تتبع النوم شغال 🌙" : "تتبع النوم"}
-            </Text>
-            <Ionicons name="bed-outline" size={20} color="#94A3B8" />
-          </View>
         </View>
 
         {/* Smart alarm toggle */}
-        <View className="flex-row justify-between items-center mb-3 border-t border-background pt-3">
+        <View className="flex-row-reverse justify-between items-center mb-3 border-t border-slate-700 pt-3">
+          <View className="flex-row items-center gap-2">
+            <Ionicons name="alarm-outline" size={20} color="#94A3B8" />
+            <Text className="text-white text-sm">
+              تفعيل المنبه الذكي
+            </Text>
+          </View>
           <Switch
             value={alarmEnabled}
             onValueChange={toggleAlarm}
             trackColor={{ false: "#334155", true: "#10B981" }}
             thumbColor="white"
           />
-          <View className="flex-row items-center gap-2">
-            <Text className="text-textPrimary text-sm" style={{ fontFamily: "Cairo_400Regular" }}>
-              تفعيل المنبه الذكي
-            </Text>
-            <Ionicons name="alarm-outline" size={20} color="#94A3B8" />
-          </View>
         </View>
 
         {/* Sleep history link */}
         <TouchableOpacity
-          className="flex-row justify-between items-center border-t border-background pt-3"
+          className="flex-row-reverse justify-between items-center border-t border-slate-700 pt-3 active:scale-95"
           onPress={() => router.push("/health/sleep")}
-          activeOpacity={0.7}
+          activeOpacity={0.9}
         >
-          <Ionicons name="chevron-back" size={16} color="#94A3B8" />
-          <Text className="text-textPrimary text-sm" style={{ fontFamily: "Cairo_400Regular" }}>
+          <Text className="text-white text-sm">
             تفاصيل النوم
           </Text>
+          <Ionicons name="chevron-back" size={16} color="#94A3B8" />
         </TouchableOpacity>
       </View>
 
       {/* Settings */}
-      <View className="bg-surface rounded-2xl overflow-hidden mb-4">
+      <View className="bg-slate-800/50 border border-slate-700 rounded-2xl overflow-hidden mb-4">
         {user?.accountType === "creator" && (
           <MenuItem icon="school-outline" label="لوحة Creator 🎓" onPress={() => router.push("/creator/dashboard")} />
         )}
@@ -352,18 +354,22 @@ export default function ProfileScreen() {
 
       {/* Logout */}
       <TouchableOpacity
-        className="border border-surface rounded-2xl py-4 items-center mb-3"
+        className="border border-slate-700 rounded-2xl py-4 items-center mb-3 active:scale-95"
         onPress={() => setShowLogoutDialog(true)}
-        activeOpacity={0.8}
+        activeOpacity={0.9}
       >
-        <Text className="text-textSecondary font-bold" style={{ fontFamily: "Cairo_700Bold" }}>
+        <Text className="text-slate-400 font-bold">
           تسجيل الخروج
         </Text>
       </TouchableOpacity>
 
       {/* Delete account */}
-      <TouchableOpacity className="items-center py-3" onPress={() => setShowDeleteDialog(true)}>
-        <Text className="text-red-400/70 text-sm" style={{ fontFamily: "Cairo_400Regular" }}>
+      <TouchableOpacity 
+        className="items-center py-3 active:scale-95" 
+        onPress={() => setShowDeleteDialog(true)}
+        activeOpacity={0.9}
+      >
+        <Text className="text-red-400/70 text-sm">
           حذف الحساب نهائياً
         </Text>
       </TouchableOpacity>
@@ -396,7 +402,7 @@ export default function ProfileScreen() {
           error={deleteError}
         />
       </ConfirmDialog>
-    </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -408,12 +414,12 @@ function StatBadge({ icon, label, value, color }: {
   color: string;
 }) {
   return (
-    <View className="flex-1 bg-surface rounded-2xl p-3 items-center">
+    <View className="flex-1 bg-slate-800/50 border border-slate-700 rounded-2xl p-3 items-center">
       <Ionicons name={icon} size={20} color={color} />
-      <Text className="text-textPrimary font-bold mt-1" style={{ fontFamily: "Cairo_700Bold" }}>
+      <Text className="text-white font-bold mt-1">
         {value}
       </Text>
-      <Text className="text-textSecondary text-xs" style={{ fontFamily: "Cairo_400Regular" }}>
+      <Text className="text-slate-400 text-xs">
         {label}
       </Text>
     </View>
@@ -430,20 +436,19 @@ function MenuItem({
 }) {
   return (
     <TouchableOpacity
-      className="flex-row items-center justify-between px-4 py-4 border-b border-background"
+      className="flex-row-reverse items-center justify-between px-4 py-4 border-b border-slate-700 active:scale-[0.98]"
       onPress={onPress}
-      activeOpacity={0.7}
+      activeOpacity={0.9}
     >
-      <Ionicons name="chevron-back" size={16} color="#94A3B8" />
       <View className="flex-row items-center gap-3">
+        <Ionicons name={icon} size={20} color={highlight ? "#10B981" : "#94A3B8"} />
         <Text
-          className={highlight ? "text-primary font-bold" : "text-textPrimary"}
-          style={{ fontFamily: highlight ? "Cairo_700Bold" : "Cairo_400Regular" }}
+          className={highlight ? "text-emerald-500 font-bold" : "text-white"}
         >
           {label}
         </Text>
-        <Ionicons name={icon} size={20} color={highlight ? "#10B981" : "#94A3B8"} />
       </View>
+      <Ionicons name="chevron-back" size={16} color="#94A3B8" />
     </TouchableOpacity>
   );
 }
