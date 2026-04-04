@@ -38,7 +38,6 @@ import { database } from "@/db/database";
 import { apiClient } from "@/services/apiClient";
 import { processSyncQueue, hasPendingSync } from "@/services/syncService";
 import { getQueueCount } from "@/services/syncQueue";
-import "../global.css";
 
 const ACTIVE_SESSION_KEY = "neura_timer_state";
 const isExpoGo = Constants.appOwnership === "expo";

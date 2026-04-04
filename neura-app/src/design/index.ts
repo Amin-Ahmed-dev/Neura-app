@@ -13,3 +13,6 @@ export * from './elevation';
 
 // Animation utilities
 export * from './animations';
+
+// StyleSheet-based styles (Expo Go compatible)
+export * from './styles';

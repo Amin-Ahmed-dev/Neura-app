@@ -402,6 +402,7 @@ export default function ProfileScreen() {
           error={deleteError}
         />
       </ConfirmDialog>
+      </ScrollView>
     </SafeAreaView>
   );
 }
